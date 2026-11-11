@@ -15,8 +15,15 @@ STORAGE_FILE = Path.home() / ".snippet_manager.json"
 def load_snippets():
     """Load snippets from storage file."""
     if STORAGE_FILE.exists():
-        with open(STORAGE_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
+        try:
+            with open(STORAGE_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            click.echo(
+                "Error: storage file '{}' is corrupt (invalid JSON).".format(STORAGE_FILE),
+                err=True,
+            )
+            raise SystemExit(1)
     return {}
 
 
